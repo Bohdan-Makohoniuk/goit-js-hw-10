@@ -6,7 +6,7 @@ import Notiflix from 'notiflix';
 // Затримка на відповідь після вводу в стрічку inputRibbon
 const DEBOUNCE_DELAY = 300;
 
-
+// Отримання посилань на інтерактивні елементи 
 const refs = {
   inputRibbon: document.querySelector('#search-box'),
   countryList: document.querySelector('.country-list'),
@@ -18,8 +18,9 @@ refs.inputRibbon.addEventListener('input', debounce(onInputValue, DEBOUNCE_DELAY
 
 // Функція для вводу 
 function onInputValue() {
+  // trim обрізає по бокам зайві пробіли 
     const name = refs.inputRibbon.value.trim();
-    // Перевірка на чи це не пуста стрічка
+    // Перевірка чи це не пуста стрічка
   if (name === '') {
     return (refs.countryList.innerHTML = ''), (refs.countryInfo.innerHTML = '');
   }
@@ -28,6 +29,7 @@ function onInputValue() {
     .then(r => {
       refs.countryList.innerHTML = '';
       refs.countryInfo.innerHTML = '';
+      // Умови для спливаючих повідомлень
       if (r.length > 10) {
         Notiflix.Notify.info(
           'Too many matches found. Please enter a more specific name.'
@@ -53,36 +55,36 @@ function onInputValue() {
     });
 }
 
-// function renderCountryList(countries) {
-//   return countries
-//     .map(({ flags, name }) => {
-//       return `
-//     <li class="country-list__item">
-//         <img class="country-list__flag" src="${flags.svg}" alt="Flag of ${name.official}" width = 50px height = 50px>
-//         <h2 class="country-list__name">${name.official}</h2>
-//     </li>
-//     `;
-//     })
-//     .join('');
-// }
+function renderCountryList(countries) {
+  return countries
+    .map(({ flags, name }) => {
+      return `
+    <li class="country-list__item">
+        <img class="country-list__flag" src="${flags.svg}" alt="Flag of ${name.official}" width = 50px height = 50px>
+        <h2 class="country-list__name">${name.official}</h2>
+    </li>
+    `;
+    })
+    .join('');
+}
 
-// function renderCountryInfo(countries) {
-//   return countries.map(({ flags, name, capital, population, languages }) => {
-//     return `
-//     <img width="100px" height="100px" src='${flags.svg}' 
-//     alt='${name.official} flag' />
-//       <ul class="country-info__list">
-//           <li class="country-info__item">
-//           <p><b>Name: </b>${name.official}</p></li>
-//           <li class="country-info__item"><p><b>Capital: </b>${capital}</p></li>
-//           <li class="country-info__item"><p><b>Population: </b>${population}</p></li>
-//           <li class="country-info__item"><p><b>Languages: </b>${Object.values(
-//             languages
-//           )}</p></li>
-//       </ul>
-//       `;
-//   }).join();
-// }
+function renderCountryInfo(countries) {
+  return countries.map(({ flags, name, capital, population, languages }) => {
+    return `
+    <img width="100px" height="100px" src='${flags.svg}' 
+    alt='${name.official} flag' />
+      <ul class="country-info__list">
+          <li class="country-info__item">
+          <p><b>Name: </b>${name.official}</p></li>
+          <li class="country-info__item"><p><b>Capital: </b>${capital}</p></li>
+          <li class="country-info__item"><p><b>Population: </b>${population}</p></li>
+          <li class="country-info__item"><p><b>Languages: </b>${Object.values(
+            languages
+          )}</p></li>
+      </ul>
+      `;
+  }).join();
+}
 
 
 
