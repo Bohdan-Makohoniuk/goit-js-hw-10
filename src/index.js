@@ -1,60 +1,53 @@
 import './css/styles.css';
-import './css/styles.css';
 import { fetchCountries } from './fetchCountries';
-var debounce = require('lodash.debounce');
+import debounce from 'lodash.debounce';
 import Notiflix from 'notiflix';
-// Затримка на відповідь після вводу в стрічку inputRibbon
-const DEBOUNCE_DELAY = 300;
 
-// Отримання посилань на інтерактивні елементи 
+const DEBOUNCE_DELAY = 300;
+// Посилання на інтерактивні елементи
 const refs = {
-  inputRibbon: document.querySelector('#search-box'),
+  inputRibbon: document.querySelector('input','[#search-box]'),
   countryList: document.querySelector('.country-list'),
   countryInfo: document.querySelector('.country-info'),
 };
 // Отримали посилання на стрічку вводу, вкл. слухача input, та покет debounce для сповіщень. 
 refs.inputRibbon.addEventListener('input', debounce(onInputValue, DEBOUNCE_DELAY));
 
-
 // Функція для вводу 
 function onInputValue() {
-  // trim обрізає по бокам зайві пробіли 
-    const name = refs.inputRibbon.value.trim();
-    // Перевірка чи це не пуста стрічка
+  const name = refs.inputRibbon.value.trim();
   if (name === '') {
     return (refs.countryList.innerHTML = ''), (refs.countryInfo.innerHTML = '');
   }
-// Функція запиту на сервер
+// Запит на сервер
   fetchCountries(name)
     .then(r => {
       refs.countryList.innerHTML = '';
       refs.countryInfo.innerHTML = '';
-      // Умови для спливаючих повідомлень
       if (r.length > 10) {
         Notiflix.Notify.info(
           'Too many matches found. Please enter a more specific name.'
         );
       }
-      else if (response.length < 10 && response.length >= 2) {
+      else if (r.length < 10 && r.length >= 2) {
         refs.countryList.insertAdjacentHTML(
           'beforeend',
-          renderCountryList(response)
+          renderCountryList(r)
         );
-      }
-       else {
+      } else {
         refs.countryInfo.insertAdjacentHTML(
           'beforeend',
-          renderCountryInfo(response)
+          renderCountryInfo(r)
         );
       }
     })
-    //  catch обробник помилок у випадку якщо  then поверне помилку
+    // catch. відловлювач помилок
     .catch(() => {
         Notiflix.Notify.failure('Oops, there is no country with that name');
       return [];
     });
 }
-
+// Рендер розмітки список 
 function renderCountryList(countries) {
   return countries
     .map(({ flags, name }) => {
@@ -67,7 +60,7 @@ function renderCountryList(countries) {
     })
     .join('');
 }
-
+// Рендер розмітки при успішному пошуку конкретної країни
 function renderCountryInfo(countries) {
   return countries.map(({ flags, name, capital, population, languages }) => {
     return `
@@ -85,7 +78,3 @@ function renderCountryInfo(countries) {
       `;
   }).join();
 }
-
-
-
-
